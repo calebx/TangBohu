@@ -25,7 +25,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     System.setProperty("java.net.useSystemProxies", "true");
-    
+
     install(ContentNegotiation) {
         json(
             Json(
@@ -47,7 +47,7 @@ fun Application.module(testing: Boolean = false) {
             ServiceAccountCredentials
                 .fromStream(
                     FileInputStream(
-                        "/Users/cxiang/code/xiang-pi-61750bc51e20.json"
+                        "/usr/local/etc/xiang-pi.json"
                     )
                 )
         )
