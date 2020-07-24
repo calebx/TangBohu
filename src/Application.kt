@@ -39,17 +39,17 @@ fun Application.module(testing: Boolean = false) {
     val client = HttpClient(Apache) {
     }
 
-    val translate = TranslateOptions
-        .newBuilder()
-        .setCredentials(
-            ServiceAccountCredentials
-                .fromStream(
-                    FileInputStream(
-                        "/usr/local/etc/xiang-pi.json"
-                    )
-                )
-        )
-        .build().service
+//    val translate = TranslateOptions
+//        .newBuilder()
+//        .setCredentials(
+//            ServiceAccountCredentials
+//                .fromStream(
+//                    FileInputStream(
+//                        "/usr/local/etc/xiang-pi.json"
+//                    )
+//                )
+//        )
+//        .build().service
 
     routing {
         get("/") {
