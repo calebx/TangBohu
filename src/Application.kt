@@ -60,41 +60,41 @@ fun Application.module(testing: Boolean = false) {
             call.respond(data)
         }
 
-        get("/t/{text}") {
-            val text = call.parameters.get("text")
-            val translatedText = translate.translate(
-                text,
-                Translate.TranslateOption.sourceLanguage("en"),
-                Translate.TranslateOption.targetLanguage("zh-CN")
-            );
-            val data = ResponseData(
-                true,
-                translatedText.translatedText
-            )
-            call.respond(data)
-        }
+//        get("/t/{text}") {
+//            val text = call.parameters.get("text")
+//            val translatedText = translate.translate(
+//                text,
+//                Translate.TranslateOption.sourceLanguage("en"),
+//                Translate.TranslateOption.targetLanguage("zh-CN")
+//            );
+//            val data = ResponseData(
+//                true,
+//                translatedText.translatedText
+//            )
+//            call.respond(data)
+//        }
 
-        get("/q/{text}") {
-            val lines = readPoems().map { it -> it.paragraphs }
-                .flatten()
-            val suggester = Suggester()
-            for (line in lines) {
-                suggester.addSentence(line)
-            }
-            val text = call.parameters.get("text")
-            val translatedText = translate.translate(
-                text,
-                Translate.TranslateOption.sourceLanguage("en"),
-                Translate.TranslateOption.targetLanguage("zh-CN")
-            );
-            val result = suggester.suggest(translatedText.translatedText, 1)
-            val data = ResponseData(
-                true,
-                result[0]
-            )
-
-            call.respond(data)
-        }
+//        get("/q/{text}") {
+//            val lines = readPoems().map { it -> it.paragraphs }
+//                .flatten()
+//            val suggester = Suggester()
+//            for (line in lines) {
+//                suggester.addSentence(line)
+//            }
+//            val text = call.parameters.get("text")
+//            val translatedText = translate.translate(
+//                text,
+//                Translate.TranslateOption.sourceLanguage("en"),
+//                Translate.TranslateOption.targetLanguage("zh-CN")
+//            );
+//            val result = suggester.suggest(translatedText.translatedText, 1)
+//            val data = ResponseData(
+//                true,
+//                result[0]
+//            )
+//
+//            call.respond(data)
+//        }
     }
 }
 
