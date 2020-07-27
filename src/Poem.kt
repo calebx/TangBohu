@@ -11,21 +11,32 @@ import kotlin.random.Random
 data class Poem(val paragraphs: List<String>) {
 }
 
-fun pickAFile(): String {
-    var files = mutableListOf<String>()
-    File("assets").walk().forEach { it: File ->
-        if (it.name.endsWith(".json")) {
-            files.add(it.name)
+class PoemAssets() {
+    companion object {
+        var files = mutableListOf<String>()
+        var filesCount = 0;
+
+        init {
+            File("assets").walk().forEach { it: File ->
+                if (it.name.endsWith(".json")) {
+                    files.add(it.name)
+                }
+            }
+
+            filesCount = files.size
+        }
+
+        fun pickAFile() = files[Random.nextInt(0, filesCount)]
+
+        fun loadRandomPoems(): List<Poem> {
+            val lines = File("assets/" + pickAFile())
+                .readLines()
+                .joinToString("")
+
+            val json = Json(JsonConfiguration(ignoreUnknownKeys = true))
+
+            return json.parse(Poem.serializer().list, lines)
         }
     }
-
-    val r = Random.nextInt(0, (files.size - 1))
-    return files[r]
 }
 
-fun readPoems(): List<Poem> {
-    val lines = File("assets/" + pickAFile()).readLines().joinToString("")
-    val json = Json(JsonConfiguration(ignoreUnknownKeys = true))
-
-    return json.parse(Poem.serializer().list, lines)
-}

@@ -3,12 +3,13 @@ package cn.luedian.t
 import com.google.auth.oauth2.ServiceAccountCredentials
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
+import com.hankcs.hanlp.HanLP
 import com.hankcs.hanlp.suggest.Suggester
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
+// import io.ktor.client.HttpClient
+// import io.ktor.client.engine.apache.Apache
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.ContentType
 import io.ktor.response.respond
@@ -18,6 +19,7 @@ import io.ktor.serialization.DefaultJsonConfiguration
 import io.ktor.serialization.json
 import kotlinx.serialization.json.Json
 import java.io.FileInputStream
+import kotlin.random.Random
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -38,8 +40,8 @@ fun Application.module(testing: Boolean = false) {
         )
     }
 
-    val client = HttpClient(Apache) {
-    }
+    // never used, keep here only for future refer
+    // val client = HttpClient(Apache) { }
 
     val translate = TranslateOptions
         .newBuilder()
@@ -57,7 +59,7 @@ fun Application.module(testing: Boolean = false) {
         get("/") {
             val data = ResponseData(
                 true,
-                "hola, talk to caleb for detail please. thx."
+                "hola, buddy! You can talk to Caleb[caleb.xiang(AT)gmail.com] for detail. thx!"
             )
             call.respond(data)
         }
@@ -69,31 +71,32 @@ fun Application.module(testing: Boolean = false) {
                 Translate.TranslateOption.sourceLanguage("en"),
                 Translate.TranslateOption.targetLanguage("zh-CN")
             );
-            val data = ResponseData(
-                true,
-                translatedText.translatedText
-            )
+            val data = ResponseData(true, translatedText.translatedText)
             call.respond(data)
         }
 
         get("/q/{text}") {
-            val lines = readPoems().map { it -> it.paragraphs }
-                .flatten()
             val suggester = Suggester()
-            for (line in lines) {
-                suggester.addSentence(line)
+
+            for (i in 0..1) {
+                val lines = PoemAssets.loadRandomPoems().map { it -> it.paragraphs }
+                    .flatten()
+                lines.forEach(suggester::addSentence)
             }
+
             val text = call.parameters.get("text")
             val translatedText = translate.translate(
                 text,
                 Translate.TranslateOption.sourceLanguage("en"),
                 Translate.TranslateOption.targetLanguage("zh-CN")
             );
-            val result = suggester.suggest(translatedText.translatedText, 1)
-            val data = ResponseData(
-                true,
-                result[0]
-            )
+
+            // pick two lines from suggester, but random reply one of them
+            val result = suggester.suggest(translatedText.translatedText, 2)
+
+            val resultIdx = Random.nextInt(0, 2)
+            var resultText = HanLP.convertToSimplifiedChinese(result[resultIdx])
+            val data = ResponseData(true, resultText)
 
             call.respond(data)
         }
