@@ -81,7 +81,8 @@ fun Application.module(testing: Boolean = false) {
         get("/q/{text}") {
             val suggester = Suggester()
 
-            for (i in 0..1) {
+            // pick 3 books of poems, combine them to pick a single line
+            for (i in 0..2) {
                 val lines = PoemAssets.loadRandomPoems().map { it -> it.paragraphs }
                     .flatten()
                 lines.forEach(suggester::addSentence)
@@ -97,7 +98,7 @@ fun Application.module(testing: Boolean = false) {
             // pick two lines from suggester, but random reply one of them
             val result = suggester.suggest(translatedText.translatedText, 2)
 
-            val resultIdx = Random.nextInt(0, 2)
+            val resultIdx = 0; // or we can try random pick as: Random.nextInt(0, 2)
             var resultText = HanLP.convertToSimplifiedChinese(result[resultIdx])
             val data = ResponseData(true, resultText)
 
