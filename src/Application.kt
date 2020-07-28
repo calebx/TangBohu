@@ -8,6 +8,7 @@ import com.hankcs.hanlp.suggest.Suggester
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.features.CallLogging
 // import io.ktor.client.HttpClient
 // import io.ktor.client.engine.apache.Apache
 import io.ktor.features.ContentNegotiation
@@ -27,6 +28,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     System.setProperty("java.net.useSystemProxies", "true");
+
+    install(CallLogging)
 
     install(ContentNegotiation) {
         json(
